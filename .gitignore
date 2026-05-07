@@ -1,0 +1,12 @@
+# directories
+data/test/*
+data/train/*
+external/
+preds/*
+checkpoints/*
+
+# filetypes
+*.png
+*.csv
+*.pth
+*.npy

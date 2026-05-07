@@ -1,0 +1,17 @@
+name: depth-world
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch-cuda
+  - ipykernel
+  - pathlib
+  - numpy
+  - libtiff
+  - libjpeg-turbo
+  - pillow
+  - libpng
+  - matplotlib
+  - ipywidgets
