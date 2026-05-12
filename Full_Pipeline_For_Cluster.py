@@ -208,7 +208,7 @@ for epoch in range(NUM_EPOCHS):
                 "model_state_dict": fusion_model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "epoch": epoch,
-                "val_loss": val_loss,
+                "val_loss": mean_val_loss,
                 "config": {
                     "vjepa_dim": 1024,
                     "d_model": 256,
@@ -219,7 +219,7 @@ for epoch in range(NUM_EPOCHS):
             },
             "./checkpoints/fusion_model_best.pth")
 
-            print(f"Saved new best model with val loss {val_loss:.6f}")
+            print(f"Saved new best model with val loss {mean_val_loss:.6f}")
 
         else:
             epochs_without_improvement += 1
@@ -254,7 +254,7 @@ torch.save(
 
 # Make Prediction
 # load model
-checkpoint = torch.load("./checkpoints/fusion_model_last.pth", map_location=device)
+checkpoint = torch.load("./checkpoints/fusion_model_best.pth", map_location=device)
 fusion_model = DepthVJepaFusionTransformer(**checkpoint["config"]).to(device)
 fusion_model.load_state_dict(checkpoint["model_state_dict"])
 fusion_model.eval()
