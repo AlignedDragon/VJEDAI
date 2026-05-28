@@ -5,10 +5,10 @@ checkpoints/*
 splits/
 evaluation_results/
 __pycache__/
-
+.idea
 # filetypes
 *.png
 *.csv
 *.pth
 *.npy
-*.py[cod]
+*.py[cod].idea/
