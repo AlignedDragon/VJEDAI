@@ -1,13 +1,14 @@
 # directories
 data/test/*
 data/train/*
-external/
-preds/*
 checkpoints/*
-tests/
+splits/
+evaluation_results/
+__pycache__/
 
 # filetypes
 *.png
 *.csv
 *.pth
 *.npy
+*.py[cod]
