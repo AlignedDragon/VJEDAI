@@ -4,6 +4,7 @@ data/train/*
 external/
 preds/*
 checkpoints/*
+tests/
 
 # filetypes
 *.png

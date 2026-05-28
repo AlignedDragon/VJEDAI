@@ -1,0 +1,16 @@
+{
+  "model_family": "DA2",
+  "da2_base_model_id": "depth-anything/Depth-Anything-V2-Metric-Outdoor-Large-hf",
+  "da3_base_model_id": "depth-anything/da3metric-large",
+  "checkpoint_files": [
+    {
+      "local_path": "checkpoints/DA2_finetuned.pt",
+      "path_in_repo": "checkpoints/DA2_finetuned.pt"
+    }
+  ],
+  "format": {
+    "type": "torch_checkpoint",
+    "required_key": "model_head",
+    "description": "Checkpoint files are uploaded unchanged. Load base model first, then load checkpoint['model_head'] into the model head."
+  }
+}

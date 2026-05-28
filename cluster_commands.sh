@@ -21,7 +21,7 @@ getjobid() {
 }
 
 trackjob() {
-	ssh "$CLUSTER_USER@$CLUSTER_HOST" "tail -f '$CLUSTER_DIR/logs/depth_fusion-$1.out'"
+	ssh "$CLUSTER_USER@$CLUSTER_HOST" "tail -f '$CLUSTER_DIR/jdepth_train-$1.out'"
 }
 
 jobcpu() {
@@ -32,5 +32,9 @@ startjob() {
 }
 
 geterrors() {
-	ssh "$CLUSTER_USER@$CLUSTER_HOST" "cat '$CLUSTER_DIR/logs/depth_fusion-$1.err'"
+	ssh "$CLUSTER_USER@$CLUSTER_HOST" "cat '$CLUSTER_DIR/logs/da3metric_decoder-$1.err'"
+}
+
+getloss() {
+	ssh "$CLUSTER_USER@$CLUSTER_HOST" "grep '^step ' '$CLUSTER_DIR/logs/da3metric_decoder-$1.out'" > ~/Documents/FS26/CIL/Project/tests/loss.txt
 }
