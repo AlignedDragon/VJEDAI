@@ -476,6 +476,7 @@ for epoch in range(start_epoch, NUM_EPOCHS):
     last_epoch = epoch
     model.train()
 
+    # --- train pass ---
     total_loss = 0.0
     total_rmse = 0.0
     num_batches = 0
@@ -502,6 +503,7 @@ for epoch in range(start_epoch, NUM_EPOCHS):
     mean_train_loss = total_loss / max(num_batches, 1)
     mean_train_rmse = total_rmse / max(num_batches, 1)
 
+    # --- validation pass (always tracks SI-RMSE for model selection) ---
     model.eval()
     val_loss_sum = 0.0
     val_rmse_sum = 0.0

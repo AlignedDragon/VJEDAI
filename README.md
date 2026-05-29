@@ -2,8 +2,55 @@
 
 VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth estimation model using a V-JEPA 2.1 visual encoder coupled to a Depth Anything V2 depth decoder. 
 
-## Ali's part
-e.g., short description, environment setup, experiments, training, inference
+## VJEDAI pipeline
+
+The core model pairs a **frozen V-JEPA 2.1 encoder** with a **trainable Depth Anything V2 DPT decoder** and a **per-pixel Gaussian uncertainty head**. Four intermediate V-JEPA token maps are reshaped to patch grids and fed through the DPT head; the model outputs a depth map and a log-variance map. Training is scale-invariant (per-image), with two separate objectives you choose between: `si_mse` (depth only) and `nll` (heteroscedastic Gaussian, default). See the report for details.
+
+Key files:
+- `Full_Pipeline_JepaDepth.py` — end-to-end training + submission.
+- `src/jepa_depth_anything.py` — the model (`build_jepa_depth_anything`).
+- `src/{dataset,preprocessing,create_submission}.py` — data, V-JEPA input prep, Kaggle CSV.
+- `utils/infer_jdepth.py` — standalone inference from a checkpoint.
+- `utils/train_vjepa_linear_depth.py` — frozen-encoder linear-probe baseline.
+
+### Environment setup
+
+Runs on the CIL cluster conda env, plus a few pip packages and two external repos cloned under `external/`:
+
+```bash
+conda activate /cluster/courses/cil/envs/envs/monocular-depth-estimation
+pip install opencv-python timm einops
+
+git clone https://github.com/facebookresearch/vjepa2.git external/vjepa2
+git clone https://github.com/DepthAnything/Depth-Anything-V2.git external/Depth-Anything-V2
+pip install -r external/Depth-Anything-V2/requirements.txt
+
+export PYTHONPATH="external/vjepa2/src:external/vjepa2:$PWD/src:$PYTHONPATH"
+```
+
+`train_jdepth.sbatch` performs all of the above automatically (it expects the project at `$HOME/mono`). Checkpoints are written to `$SCRATCH/checkpoints/jepa_depth_<variant>/`.
+
+### Training
+
+Pick one objective per run via `JDEPTH_LOSS_MODE` (the two are independent trainings, not stages):
+
+```bash
+sbatch train_jdepth.sbatch                          # nll (default): Gaussian uncertainty
+JDEPTH_LOSS_MODE=si_mse sbatch train_jdepth.sbatch  # depth only, no uncertainty
+```
+
+Checkpoints are tagged by mode (`best_<mode>.pth`), so the two runs don't clobber each other. Model selection uses validation SI-RMSE; a `submission.csv` is written on each new best.
+
+### Inference
+
+```bash
+# Default: downloads the published checkpoint from HuggingFace
+python utils/infer_jdepth.py --out submission.csv
+
+# Or use a local checkpoint / a different HF file
+python utils/infer_jdepth.py --ckpt path/to/best_nll.pth
+python utils/infer_jdepth.py --hf-repo kalandarX/jdepth --hf-file large/v1.2_nll_deliverable.pth
+```
 
 
 ## Experiments
@@ -112,6 +159,13 @@ Purpose: Used to add comments inside of code cells.
 Tool used: ChatGPT 5.5 Thinking 
 
 Purpose: Used to get a better overview of how to use slurm and how to correctly set up the `.sbatch` files. 
+
+3. 
+Tool used: Claude Code
+
+Files affected: all files
+
+Purpose: Used to add comments to the code.
 
 ## Acknowledgements
 

@@ -213,6 +213,8 @@ class JepaDepthAnything(nn.Module):
         feats = self._encode(vjepa_input)
 
         head = self.depth_head
+        # Reshape each token sequence to a spatial map and project/resize it
+        # into the DPT feature pyramid (report Sec. 2.2).
         pyramid = []
         for i, tokens in enumerate(feats):
             expected_tokens = patch_h * patch_w
@@ -227,6 +229,7 @@ class JepaDepthAnything(nn.Module):
             x = head.resize_layers[i](x)
             pyramid.append(x)
 
+        # Coarse-to-fine RefineNet fusion of the four pyramid levels.
         l1, l2, l3, l4 = pyramid
         l1_rn = head.scratch.layer1_rn(l1)
         l2_rn = head.scratch.layer2_rn(l2)
@@ -246,6 +249,8 @@ class JepaDepthAnything(nn.Module):
             align_corners=True,
         )
 
+        # Dual heads on the shared feature map: depth mean (mu) and the
+        # parallel Gaussian log-variance (uncertainty).
         mu = head.scratch.output_conv2(shared)
         log_var = self.uncertainty_head(shared)
 
