@@ -3,7 +3,7 @@
 VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth estimation model using a V-JEPA 2.1 visual encoder coupled to a Depth Anything V2 depth decoder. 
 
 ## Ali's part
-e.g. short description, environment setup, experiments, training, inference
+e.g., short description, environment setup, experiments, training, inference
 
 
 ## Experiments
@@ -13,13 +13,13 @@ This repository contains two experiment notebooks for training and evaluating De
 - `experiments/da_train.ipynb`
 - `experiments/da_evaluate.ipynb`
 
-Both notebooks support experiments with **Depth Anything V2** and **Depth Anything 3**. The main goal is to compare the prediction heads and to test whether the depth prediction heads performs better when it is fine-tuned from pretrained weights or trained after random re-initialization, while keeping the backbone frozen.
+Both notebooks support experiments with **Depth Anything V2** and **Depth Anything 3**. The main goal is to compare the prediction heads and to test whether the depth prediction heads perform better when they are fine-tuned from pretrained weights or trained after random re-initialization, while keeping the backbone frozen.
 
 ### Data Format
 
 The notebooks expect the training data to be located in `data/train/`. The training directory should contain RGB images (`.png`) and matching depth maps (`.npy`). To recreate our exact results, the data should come from the [ETHZ CIL Monocular Depth Estimation 2026 kaggle competition](https://www.kaggle.com/competitions/ethz-cil-monocular-depth-estimation-2026).
 
-A deterministic train/validation split is created automatically and stored in `splits`. This ensures that all experiments use the same validation samples and can be compared fairly.
+A deterministic train/validation split is created automatically and stored in `splits/`. This ensures that all experiments use the same validation samples and can be compared fairly.
 
 ### Training Notebook
 
@@ -43,7 +43,7 @@ The training objective combines:
 1. an L1 depth reconstruction loss, and
 2. a gradient-matching loss that encourages locally similar depth structure.
 
-During training, the notebook evaluates the model on the validation split using scale invariant RMSE. It saves one checkpoint after every epoch and also stores the best checkpoint according to validation si-RMSE. Checkpoints are written to `checkpoints/` with names such as
+During training, the notebook evaluates the model on the validation split using scale-invariant RMSE. It saves one checkpoint after every epoch and also stores the best checkpoint according to validation si-RMSE. Checkpoints are written to `checkpoints/` with names such as
 ```
 DA2_pretrained_epoch_001.pt
 DA2_pretrained_best.pt
@@ -61,7 +61,7 @@ In the configuration cell, choose the model family:
 MODEL_FAMILY = 'DA2' # or 'DA3'
 ```
 
-and choose wheter to evaluate the original pretrained model or a trained head checkpoint:
+and choose whether to evaluate the original pretrained model or a trained head checkpoint:
 
 ```python
 WEIGHTS_SOURCE = 'pretrained' # or checkpoint
@@ -111,7 +111,7 @@ Purpose: Used to add comments inside of code cells.
 2. 
 Tool used: ChatGPT 5.5 Thinking 
 
-Purpose: Used to get a better overview of how to use slurm and how to correctly setup the `.sbatch` files. 
+Purpose: Used to get a better overview of how to use slurm and how to correctly set up the `.sbatch` files. 
 
 ## Acknowledgements
 
