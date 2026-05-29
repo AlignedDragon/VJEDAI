@@ -2,6 +2,10 @@
 
 VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth estimation model using a V-JEPA 2.1 visual encoder coupled to a Depth Anything V2 depth decoder. 
 
+> ## 🤗 **[Download the deliverable checkpoint (`v1.2_nll_deliverable.pth`) on Hugging Face](https://huggingface.co/kalandarX/jdepth/blob/main/large/v1.2_nll_deliverable.pth)**
+>
+> ## 💻 **[GitHub repository → `raphaelgerber/VJEDAI`](https://github.com/raphaelgerber/VJEDAI)**
+
 ## VJEDAI pipeline
 
 The core model pairs a **frozen V-JEPA 2.1 encoder** with a **trainable Depth Anything V2 DPT decoder** and a **per-pixel Gaussian uncertainty head**. Four intermediate V-JEPA token maps are reshaped to patch grids and fed through the DPT head; the model outputs a depth map and a log-variance map. Training is scale-invariant (per-image), with two separate objectives you choose between: `si_mse` (depth only) and `nll` (heteroscedastic Gaussian, default). See the report for details.
