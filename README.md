@@ -103,10 +103,13 @@ eval_DA2_pretrained.csv
 ## AI Usage Declaration
 
 Tool used: Claude Code
+
 Files affected: `da_evaluated.ipynb`, `da_train.ipynb`
+
 Purpose: Used to add comments inside of code cells.
 
 Tool used: ChatGPT 5.5 Thinking 
+
 Purpose: Used to get a better overview of how to use slurm and how to correctly setup the `.sbatch` files. 
 
 ## Acknowledgements
