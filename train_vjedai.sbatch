@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=jdepth_train
+#SBATCH --job-name=vjedai_train
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.err
 #SBATCH --partition=gpu
@@ -39,4 +39,20 @@ export PYTHONPATH="external/vjepa2/src:$PYTHONPATH"
 export PYTHONPATH="external/vjepa2:$PYTHONPATH"
 export PYTHONPATH="$HOME/mono/src:$PYTHONPATH"
 
-python -u Full_Pipeline_JepaDepth.py
+# --- Run mode (video-native by default; image = T=1 special case) -----------
+# Video mode trains on T-frame clips with the temporal-consistency loss and
+# warm-starts the temporal head from Video-Depth-Anything-Large. Point
+# VJEDAI_VIDEO_TRAIN_DIR at your per-clip dataset (see src/dataset.VideoTrainDataset).
+export VJEDAI_DATA_MODE="${VJEDAI_DATA_MODE:-video}"
+export VJEDAI_VIDEO_TRAIN_DIR="${VJEDAI_VIDEO_TRAIN_DIR:-}"
+# export VJEDAI_VIDEO_TEST_DIR="..."          # optional per-frame prediction dump
+export VJEDAI_CLIP_LEN="${VJEDAI_CLIP_LEN:-16}"
+export VJEDAI_BATCH_SIZE="${VJEDAI_BATCH_SIZE:-1}"   # clips/batch (video is memory-heavy)
+export VJEDAI_LOSS_MODE="${VJEDAI_LOSS_MODE:-nll}"
+# encode_mode: "clip" = VJEPA video path (spatiotemporal attention) + learned
+# temporal upsampler; "per_frame" = VJEPA per-frame image path (ablation).
+export VJEDAI_ENCODE_MODE="${VJEDAI_ENCODE_MODE:-clip}"
+# To reproduce the original single-image baseline instead, launch with:
+#   VJEDAI_DATA_MODE=image sbatch train_vjedai.sbatch
+
+python -u train_vjedai.py

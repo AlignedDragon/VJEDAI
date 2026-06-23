@@ -11,10 +11,10 @@ VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth
 The core model pairs a **frozen V-JEPA 2.1 encoder** with a **trainable Depth Anything V2 DPT decoder** and a **per-pixel Gaussian uncertainty head**. Four intermediate V-JEPA token maps are reshaped to patch grids and fed through the DPT head; the model outputs a depth map and a log-variance map. Training is scale-invariant (per-image), with two separate objectives you choose between: `si_mse` (depth only) and `nll` (heteroscedastic Gaussian, default). See the report for details.
 
 Key files:
-- `Full_Pipeline_JepaDepth.py` — end-to-end training + submission.
-- `src/jepa_depth_anything.py` — the model (`build_jepa_depth_anything`).
+- `train_vjedai.py` — end-to-end training + submission.
+- `src/vjedai.py` — the model (`build_vjedai`).
 - `src/{dataset,preprocessing,create_submission}.py` — data, V-JEPA input prep, Kaggle CSV.
-- `utils/infer_jdepth.py` — standalone inference from a checkpoint.
+- `utils/infer_vjedai.py` — standalone inference from a checkpoint.
 - `utils/train_vjepa_linear_depth.py` — frozen-encoder linear-probe baseline.
 
 ### Environment setup
@@ -32,15 +32,15 @@ pip install -r external/Depth-Anything-V2/requirements.txt
 export PYTHONPATH="external/vjepa2/src:external/vjepa2:$PWD/src:$PYTHONPATH"
 ```
 
-`train_jdepth.sbatch` performs all of the above automatically (it expects the project at `$HOME/mono`). Checkpoints are written to `$SCRATCH/checkpoints/jepa_depth_<variant>/`.
+`train_vjedai.sbatch` performs all of the above automatically (it expects the project at `$HOME/mono`). Checkpoints are written to `$SCRATCH/checkpoints/vjedai_<variant>/`.
 
 ### Training
 
-Pick one objective per run via `JDEPTH_LOSS_MODE` (the two are independent trainings, not stages):
+Pick one objective per run via `VJEDAI_LOSS_MODE` (the two are independent trainings, not stages):
 
 ```bash
-sbatch train_jdepth.sbatch                          # nll (default): Gaussian uncertainty
-JDEPTH_LOSS_MODE=si_mse sbatch train_jdepth.sbatch  # depth only, no uncertainty
+sbatch train_vjedai.sbatch                          # nll (default): Gaussian uncertainty
+VJEDAI_LOSS_MODE=si_mse sbatch train_vjedai.sbatch  # depth only, no uncertainty
 ```
 
 Checkpoints are tagged by mode (`best_<mode>.pth`), so the two runs don't clobber each other. Model selection uses validation SI-RMSE; a `submission.csv` is written on each new best.
@@ -49,11 +49,11 @@ Checkpoints are tagged by mode (`best_<mode>.pth`), so the two runs don't clobbe
 
 ```bash
 # Default: downloads the published checkpoint from HuggingFace
-python utils/infer_jdepth.py --out submission.csv
+python utils/infer_vjedai.py --out submission.csv
 
 # Or use a local checkpoint / a different HF file
-python utils/infer_jdepth.py --ckpt path/to/best_nll.pth
-python utils/infer_jdepth.py --hf-repo kalandarX/jdepth --hf-file large/v1.2_nll_deliverable.pth
+python utils/infer_vjedai.py --ckpt path/to/best_nll.pth
+python utils/infer_vjedai.py --hf-repo kalandarX/jdepth --hf-file large/v1.2_nll_deliverable.pth
 ```
 
 

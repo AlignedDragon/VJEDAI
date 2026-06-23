@@ -2,7 +2,7 @@
 # coding: utf-8
 """Train a frozen VJEPA 2.1 linear probe for monocular depth.
 
-This is a minimal baseline companion to ``Full_Pipeline_JepaDepth.py``:
+This is a minimal baseline companion to ``train_vjedai.py``:
 VJEPA 2.1 is frozen, the last VJEPA feature map is reshaped to a patch grid,
 and a single 1x1 convolution predicts depth per patch before bilinear
 upsampling to the target resolution.

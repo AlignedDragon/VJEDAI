@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""Standalone inference / submission writer for a saved JepaDepthAnything model.
+"""Standalone inference / submission writer for a saved vjedai model.
 
 Loads a trained checkpoint and writes a Kaggle submission.csv, without
 touching the training pipeline. The model-build sequence (VJEPA hub.load
 with DA kept off sys.path until afterwards) mirrors
-``Full_Pipeline_JepaDepth.py`` exactly -- see the long comment there for why
+``train_vjedai.py`` exactly -- see the long comment there for why
 the sys.path ordering matters.
 
 Depth post-processing matches the fixed ``write_submission_from_model``:
@@ -16,7 +16,7 @@ value inside float16's well-behaved band and avoids the old global-rescale
 path that collapsed to an all-zero submission on float16 overflow.
 
 Usage:
-    python infer_jdepth.py [--ckpt PATH] [--variant large] \\
+    python infer_vjedai.py [--ckpt PATH] [--variant large] \\
         [--out submission.csv] [--test-dir DIR] [--batch-size 8]
 
 If --ckpt is omitted the checkpoint is downloaded from HuggingFace
@@ -91,7 +91,7 @@ def parse_args():
     p.add_argument(
         "--calibration-csv",
         default=None,
-        help="Optional calibration_jdepth.csv; uses temperature_scale from it if present.",
+        help="Optional calibration_vjedai.csv; uses temperature_scale from it if present.",
     )
     return p.parse_args()
 
@@ -133,7 +133,7 @@ def resolve_ckpt(args):
 # -----------------------------------------------------------------------------
 
 def setup_syspath():
-    # Keep DA off the path for now (see Full_Pipeline_JepaDepth.py).
+    # Keep DA off the path for now (see train_vjedai.py).
     for p in [str(DA_ROOT)]:
         while p in sys.path:
             sys.path.remove(p)
@@ -155,7 +155,7 @@ def build_model(variant, device):
         if module_name == "app" or module_name.startswith("app."):
             del sys.modules[module_name]
 
-    from jepa_depth_anything import VARIANTS, build_jepa_depth_anything  # noqa: E402
+    from vjedai import VARIANTS, build_vjedai  # noqa: E402
 
     cfg = VARIANTS[variant]
     print(
@@ -177,7 +177,7 @@ def build_model(variant, device):
 
     # Trained depth_head weights overwrite the DA init anyway, so skip the
     # DA download.
-    model = build_jepa_depth_anything(
+    model = build_vjedai(
         vj_encoder, variant=variant, device=device, load_da_pretrained=False
     )
     return model
@@ -240,7 +240,12 @@ def main():
                     out["log_var"], uncertainty_temperature
                 )
             pred_depths = out["depth"]
-            if pred_depths.ndim == 4:
+            # The video-native model returns [B, T, 1, H, W]; image inference is
+            # the T=1 case, so collapse the time + channel axes to [B, H, W].
+            # (Kept tolerant of an older [B, 1, H, W] checkpoint output too.)
+            if pred_depths.ndim == 5:
+                pred_depths = pred_depths[:, 0, 0]
+            elif pred_depths.ndim == 4:
                 pred_depths = pred_depths.squeeze(1)
             pred_depths = pred_depths.detach().float().cpu().numpy()
 
