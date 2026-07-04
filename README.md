@@ -1,10 +1,11 @@
-# VJEDAI
+<h1 align="center">VJEDAI</h1>
+<p align="center"><b>V-JEPA Encoder for Depth Anything Inference</b></p>
 
-VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth estimation model using a V-JEPA 2.1 visual encoder coupled to a Depth Anything V2 depth decoder. 
+<p align="center">
+  <a href="https://huggingface.co/kalandarX/jdepth"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-yellow" alt="Hugging Face Model"></a>
+</p>
 
-> ## 🤗 **[Download the deliverable checkpoint (`v1.2_nll_deliverable.pth`) on Hugging Face](https://huggingface.co/kalandarX/jdepth/blob/main/large/v1.2_nll_deliverable.pth)**
->
-> ## 💻 **[GitHub repository → `raphaelgerber/VJEDAI`](https://github.com/raphaelgerber/VJEDAI)**
+VJEDAI (V-JEPA Encoder for Depth Anything Inference) is a hybrid monocular depth estimation model using a V-JEPA 2.1 visual encoder coupled to a Depth Anything V2 depth decoder.
 
 ## VJEDAI pipeline
 
